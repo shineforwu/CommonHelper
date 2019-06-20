@@ -10,17 +10,19 @@ namespace ShineHelper
     {
         static void Main(string[] args)
         {
-            GitHelper h = new GitHelper();
-            h.GitSourcePath = @"https://github.com/shineforwu/mqtt_Test.git";
-            h.GitLocalPath = @"D:\MyWorkspace\mqtt_Test";
-            h.LocalPathDisk = "D";
-            //h.Init();
+            //GitHelper h = new GitHelper();
+            //h.GitSourcePath = @"https://github.com/shineforwu/mqtt_Test.git";
+            //h.GitLocalPath = @"D:\MyWorkspace\mqtt_Test";
+            //h.LocalPathDisk = "D";
+            ////h.Init();
 
-            h.LocalBranchName = "Test";
-            h.OriginBranchName = "Test";
-            h.CheckOut();
-            Console.WriteLine("is f:"+h.IsChangeAfterPull());
-            Console.WriteLine(h.AfterPullMessage);
+            //h.LocalBranchName = "Test";
+            //h.OriginBranchName = "Test";
+            //h.CheckOut();
+            //Console.WriteLine("is f:"+h.IsChangeAfterPull());
+            //Console.WriteLine(h.AfterPullMessage);
+            EmailHelper h = new EmailHelper();
+            h.RunTest();
             Console.ReadKey();
 
         }
