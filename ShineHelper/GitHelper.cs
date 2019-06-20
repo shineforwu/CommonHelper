@@ -24,9 +24,26 @@ namespace ShineHelper
 
         public string LastLineMessage = string.Empty;
 
-        private Process p=null;
+        private Process p = null;
 
         public string AfterPullMessage = string.Empty;
+
+        public void RunTest()
+        {
+            GitHelper h = new GitHelper();
+            h.GitSourcePath = @"https://github.com/shineforwu/mqtt_Test.git";
+            h.GitLocalPath = @"D:\MyWorkspace\mqtt_Test";
+            h.LocalPathDisk = "D";
+            //h.Init();
+
+            h.LocalBranchName = "Test";
+            h.OriginBranchName = "Test";
+            //h.CheckOut();
+            //Console.WriteLine("is f:" + h.IsChangeAfterPull());
+            //Console.WriteLine(h.AfterPullMessage);
+            h.Commit("Test");
+            h.Push();
+        }
         public void CdLocalPath()
         {
             try
@@ -40,15 +57,15 @@ namespace ShineHelper
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.RedirectStandardError = true;
                 p.StartInfo.CreateNoWindow = true;
-               
+
                 p.Start();
                 string cdLocalPath = string.Empty;
-                if(LocalPathDisk.ToUpper().Trim()!="C")
+                if (LocalPathDisk.ToUpper().Trim() != "C")
                 {
                     cdLocalPath = LocalPathDisk + ":";
                     p.StandardInput.WriteLine(cdLocalPath);
                 }
-                p.StandardInput.WriteLine(@"cd "+GitLocalPath);
+                p.StandardInput.WriteLine(@"cd " + GitLocalPath);
                 Console.WriteLine("CdLocalPath over");
             }
             catch (Exception ex)
@@ -57,11 +74,11 @@ namespace ShineHelper
                 throw ex;
             }
 
-            
+
         }
         public void CloseProcess()
         {
-            if(p!=null)
+            if (p != null)
             {
                 p.Close();
             }
@@ -82,7 +99,7 @@ namespace ShineHelper
                 while (!p.StandardOutput.EndOfStream)
                 {
                     LastLineMessage += p.StandardOutput.ReadLine();
-                    //Console.WriteLine(LastLineMessage);
+                    Console.WriteLine(LastLineMessage);
                 }
                 p.WaitForExit();
                 p.Close();
@@ -94,7 +111,7 @@ namespace ShineHelper
                 CloseProcess();
                 throw ex;
             }
-           
+
         }
 
         public string Pull()
@@ -102,7 +119,7 @@ namespace ShineHelper
             CdLocalPath();
             string OutStr = string.Empty;
             string cmd = "git pull origin " + OriginBranchName;
-            
+
             try
             {
                 Console.WriteLine("Pull Start");
@@ -110,8 +127,8 @@ namespace ShineHelper
                 p.StandardInput.WriteLine("exit");
                 while (!p.StandardOutput.EndOfStream)
                 {
-                OutStr += p.StandardOutput.ReadLine();
-                //Console.WriteLine(LastLineMessage);
+                    OutStr += p.StandardOutput.ReadLine();
+                    //Console.WriteLine(LastLineMessage);
                 }
                 p.WaitForExit();
                 p.Close();
@@ -130,12 +147,62 @@ namespace ShineHelper
             Console.WriteLine("IsChangeAfterPull Start");
             bool flag = false;
             Pull();
-            if(AfterPullMessage.Contains("changed"))
+            if (AfterPullMessage.Contains("changed"))
             {
                 flag = true;
             }
             Console.WriteLine("IsChangeAfterPull Over");
             return flag;
         }
-    } 
+
+        public void Commit(string commitStr)
+        {
+            CdLocalPath();
+            string cmd = "git commit -am '" + commitStr + "'";
+            try
+            {
+                Console.WriteLine("Commit Start");
+                p.StandardInput.WriteLine(cmd);
+                p.StandardInput.WriteLine("exit");
+                while (!p.StandardOutput.EndOfStream)
+                {
+                    LastLineMessage += p.StandardOutput.ReadLine();
+                    Console.WriteLine(LastLineMessage);
+                }
+                p.WaitForExit();
+                p.Close();
+                Console.WriteLine("Commit Over");
+            }
+            catch (Exception ex)
+            {
+                CloseProcess();
+
+            }
+        }
+
+        public void Push()
+        {
+            CdLocalPath();
+            string cmd = "git push origin " + LocalBranchName + ":"+ OriginBranchName;
+            try
+            {
+                Console.WriteLine("Push Start");
+                p.StandardInput.WriteLine(cmd);
+                p.StandardInput.WriteLine("exit");
+                while (!p.StandardOutput.EndOfStream)
+                {
+                    LastLineMessage += p.StandardOutput.ReadLine();
+                    Console.WriteLine(LastLineMessage);
+                }
+                p.WaitForExit();
+                p.Close();
+                Console.WriteLine("Push Over");
+            }
+            catch (Exception ex)
+            {
+                CloseProcess();
+
+            }
+        }
+    }
 }
