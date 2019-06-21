@@ -99,6 +99,7 @@ namespace ShineHelper
                 while (!p.StandardOutput.EndOfStream)
                 {
                     LastLineMessage += p.StandardOutput.ReadLine();
+                    LastLineMessage += "\n";
                     Console.WriteLine(LastLineMessage);
                 }
                 p.WaitForExit();
@@ -128,6 +129,7 @@ namespace ShineHelper
                 while (!p.StandardOutput.EndOfStream)
                 {
                     OutStr += p.StandardOutput.ReadLine();
+                    OutStr += "\n";
                     //Console.WriteLine(LastLineMessage);
                 }
                 p.WaitForExit();
@@ -154,6 +156,30 @@ namespace ShineHelper
             Console.WriteLine("IsChangeAfterPull Over");
             return flag;
         }
+        public void Stash()
+        {
+            CdLocalPath();
+            string cmd = "git stash";
+            try
+            {
+                Console.WriteLine("Stash Start");
+                p.StandardInput.WriteLine(cmd);
+                p.StandardInput.WriteLine("exit");
+                while (!p.StandardOutput.EndOfStream)
+                {
+                    LastLineMessage += p.StandardOutput.ReadLine();
+                    Console.WriteLine(LastLineMessage);
+                }
+                p.WaitForExit();
+                p.Close();
+                Console.WriteLine("Stash Over");
+            }
+            catch (Exception ex)
+            {
+                CloseProcess();
+
+            }
+        }
 
         public void Commit(string commitStr)
         {
@@ -167,6 +193,7 @@ namespace ShineHelper
                 while (!p.StandardOutput.EndOfStream)
                 {
                     LastLineMessage += p.StandardOutput.ReadLine();
+                    LastLineMessage += "\n";
                     Console.WriteLine(LastLineMessage);
                 }
                 p.WaitForExit();
@@ -204,5 +231,7 @@ namespace ShineHelper
 
             }
         }
+
+
     }
 }
